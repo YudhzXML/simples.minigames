@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilih Game - YudhzXML</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      overflow: hidden;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 36px;
+      margin: 30px 0;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      text-align: center;
+      z-index: 10;
+      position: relative;
+    }
+    .menu {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 10;
+      position: relative;
+    }
+    .menu button {
+      padding: 15px 30px;
+      font-size: 20px;
+      border: none;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      transition: 0.3s;
+    }
+    .menu button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    iframe {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 99;
+    }
+    .placeholder {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      margin-top: 30px;
+      z-index: 10;
+      position: relative;
+    }
+    .loader {
+      margin: 20px auto;
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(255, 255, 255, 0.3);
+      border-top: 6px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #backButton {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10000;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 30px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      transition: background-color 0.3s;
+    }
+    #backButton:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .stars, .meteor {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    .stars {
+      width: 2px;
+      height: 2px;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+    .meteor {
+      width: 4px;
+      height: 4px;
+      background: #ffa500;
+      animation: meteor-fall 4s linear infinite;
+    }
+    @keyframes meteor-fall {
+      0% {
+        transform: translate(0, 0) rotate(45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-100vw, 100vh) rotate(45deg);
+        opacity: 0;
+      }
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      z-index: 9999;
+      backdrop-filter: blur(5px);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'stars';
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      star.style.opacity = Math.random();
+      document.body.appendChild(star);
+    }
+    for (let i = 0; i < 5; i++) {
+      const meteor = document.createElement('div');
+      meteor.className = 'meteor';
+      meteor.style.top = Math.random() * -100 + 'px';
+      meteor.style.left = Math.random() * 100 + 'vw';
+      meteor.style.animationDelay = (Math.random() * 10) + 's';
+      document.body.appendChild(meteor);
+    }
+  </script>
+
+  <h1>Pilih Game Kamu</h1>
+  <div class="menu" id="menuButtons">
+    <button onclick="loadGame('tetris')">Main Tetris</button>
+    <button onclick="loadGame('catur')">Main Catur</button>
+    <button onclick="loadGame('snake')">Main Snake</button>
+    <button onclick="loadGame('custom')">Comingsoon</button>
+  </div>
+
+  <div id="placeholder" class="placeholder">
+    <div class="loader"></div>
+    Loading Game...
+  </div>
+
+  <iframe id="gameFrame" src=""></iframe>
+  <button id="backButton" onclick="backToSelector()">Back to Selector</button>
+
+  <footer>copyright ©yudhzxml</footer>
+
+  <script>
+    function loadGame(game) {
+      const frame = document.getElementById('gameFrame');
+      const placeholder = document.getElementById('placeholder');
+      const menu = document.getElementById('menuButtons');
+      const backBtn = document.getElementById('backButton');
+
+      placeholder.innerHTML = '<div class="loader"></div> Loading Game...';
+      placeholder.style.display = 'block';
+      frame.style.display = 'none';
+      menu.style.display = 'none';
+      backBtn.style.display = 'none';
+
+      setTimeout(() => {
+        if (game === 'tetris') {
+          frame.src = 'tetris.html';
+        } else if (game === 'catur') {
+          frame.src = 'catur.html';
+        } else if (game === 'snake') {
+          frame.src = 'snake.html';
+        } else if (game === 'custom') {
+          frame.src = '';
+          placeholder.innerHTML = '<div class="loader"></div> Game Segera Hadir';
+          placeholder.style.display = 'block';
+          menu.style.display = 'flex';
+          return;
+        }
+
+        placeholder.style.display = 'none';
+        frame.style.display = 'block';
+        backBtn.style.display = 'block';
+      }, 2500);
+    }
+
+    function backToSelector() {
+      const frame = document.getElementById('gameFrame');
+      const placeholder = document.getElementById('placeholder');
+      const menu = document.getElementById('menuButtons');
+      const backBtn = document.getElementById('backButton');
+
+      frame.src = '';
+      frame.style.display = 'none';
+      placeholder.style.display = 'none';
+      menu.style.display = 'flex';
+      backBtn.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
